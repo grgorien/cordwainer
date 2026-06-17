@@ -1,0 +1,10 @@
+name: Shopify 2.0 Theme Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - next
+
+# todo (jobs) -> next head and produc @shopify/cli
+
