@@ -1,5 +1,4 @@
-name: Shopify 2.0 Theme Deployment
-# stay away from pull_request_target (future me) don't want to deal with sha checkouts
+name: Shopify 2.0 CI Theme Deployment
 
 on:
   push:
@@ -11,42 +10,45 @@ jobs:
   deploy-next:
     if: github.ref == 'refs/heads/next'
     runs-on: ubuntu-latest
-    environment: preview # env secrets join
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - run: npm install -g @shopify/cli
+
       - name: push to preview theme
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
           SHOPIFY_FLAG_STORE: ${{ secrets.SHOPIFY_FLAG_STORE }}
-          SHOPIFY_FLAG_FORCEN: =2
+          SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
+          SHOPIFY_FLAG_FORCEN: 1
         run: |
           shopify theme push \
+            --json \
             --store "$SHOPIFY_FLAG_STORE" \
             --token "$SHOPIFY_CLI_THEME_TOKEN" \
-            --theme "todo_get_me_theme_id"
+            --theme "$SHOPIFY_THEME_ID"
 
   deploy-production:
-    if: github.ref == 'refs/head/main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: production #todo please add req self review
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm install -g @shopify/cli
-      - name: push to live theme store
+      - name: push to live theme store (dev store *future -> demo store with new theme id)
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
           SHOPIFY_FLAG_STORE: ${{ secrets.SHOPIFY_FLAG_STORE }}
+          SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
           SHOPIFY_FLAG_FORCEN: 1
         run: |
           shopify theme push \
-            --store "$SHOPIFY_FLAG_STORE"
-            --token "$SHOPIFY_CLI_THEME_TOKEN"
-            --theme "same_thing_here"
+            --store "$SHOPIFY_FLAG_STORE" \
+            --token "$SHOPIFY_CLI_THEME_TOKEN" \
+            --theme "$SHOPIFY_THEME_ID" \
             --allow-live
