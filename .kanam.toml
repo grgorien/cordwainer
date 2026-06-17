@@ -1,0 +1,13 @@
+[kanam]
+name    = "cordwainer"
+created = "2026-06-16"
+wip     = 3
+
+# -- done --
+
+[[done]]
+id      = "f5a60a4e"
+title   = "go and run shopify theme init on another project mv all into this directory"
+created = "2026-06-16"
+started    = "2026-06-16"
+finished   = "2026-06-16"
