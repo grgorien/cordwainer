@@ -22,14 +22,13 @@ jobs:
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
           SHOPIFY_FLAG_STORE: ${{ secrets.SHOPIFY_FLAG_STORE }}
-          SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
+          SHOPIFY_THEME_DEV_ID: ${{ secrets.SHOPIFY_THEME_DEV_ID }}
           SHOPIFY_FLAG_FORCEN: 1
         run: |
           shopify theme push \
-            --json \
             --store "$SHOPIFY_FLAG_STORE" \
             --token "$SHOPIFY_CLI_THEME_TOKEN" \
-            --theme "$SHOPIFY_THEME_ID"
+            --theme "$SHOPIFY_THEME_DEV_ID"
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
@@ -40,7 +39,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install -g @shopify/cli
-      - name: push to live theme store (dev store *future -> demo store with new theme id)
+      - name: push to live theme demo store
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
           SHOPIFY_FLAG_STORE: ${{ secrets.SHOPIFY_FLAG_STORE }}
