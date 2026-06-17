@@ -1,3 +1,8 @@
+ifneq (,$(wildcard .env))
+	include .env
+	export
+endif
+
 dev:
 	shopify theme dev --store $(SHOPIFY_FLAG_STORE) --theme $(SHOPIFY_THEME_DEV_ID)
 
