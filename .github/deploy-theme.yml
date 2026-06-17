@@ -1,4 +1,5 @@
 name: Shopify 2.0 Theme Deployment
+# stay away from pull_request_target (future me) don't want to deal with sha checkouts
 
 on:
   push:
@@ -6,5 +7,46 @@ on:
       - main
       - next
 
-# todo (jobs) -> next head and produc @shopify/cli
+jobs:
+  deploy-next:
+    if: github.ref == 'refs/heads/next'
+    runs-on: ubuntu-latest
+    environment: preview # env secrets join
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g @shopify/cli
+      - name: push to preview theme
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+          SHOPIFY_FLAG_STORE: ${{ secrets.SHOPIFY_FLAG_STORE }}
+          SHOPIFY_FLAG_FORCEN: =2
+        run: |
+          shopify theme push \
+            --store "$SHOPIFY_FLAG_STORE" \
+            --token "$SHOPIFY_CLI_THEME_TOKEN" \
+            --theme "todo_get_me_theme_id"
 
+  deploy-production:
+    if: github.ref == 'refs/head/main'
+    runs-on: ubuntu-latest
+    environment: production #todo please add req self review
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g @shopify/cli
+      - name: push to live theme store
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+          SHOPIFY_FLAG_STORE: ${{ secrets.SHOPIFY_FLAG_STORE }}
+          SHOPIFY_FLAG_FORCEN: 1
+        run: |
+          shopify theme push \
+            --store "$SHOPIFY_FLAG_STORE"
+            --token "$SHOPIFY_CLI_THEME_TOKEN"
+            --theme "same_thing_here"
+            --allow-live
