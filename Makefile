@@ -3,6 +3,8 @@ ifneq (,$(wildcard .env))
 	export
 endif
 
+.PHONY: dev push-dev push-demo
+
 dev:
 	shopify theme dev --store $(SHOPIFY_FLAG_STORE) --theme $(SHOPIFY_THEME_DEV_ID)
 
